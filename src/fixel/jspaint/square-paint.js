@@ -14,10 +14,12 @@ SquarePaint.init = function() {
   var eventHandler = new goog.events.EventHandler();
   var cursor = SquarePaint.initCursor_(3);
   var canvas = goog.dom.getElement('single-canvas');
+  var canvasDbg = goog.dom.getElement('dbg-canvas');
   var state = {
     cursor: cursor,
     eventHandler: eventHandler,
     canvas: canvas,
+    canvasDbg: canvasDbg,
     mask: mask.empty()
   }
   SquarePaint.state_ = state;
@@ -64,8 +66,9 @@ SquarePaint.onMouseUp_ = function(state, e) {
 
 SquarePaint.onMouseMove_ = function(state, e) {
   if (state.mousedown) {
+    var off    
     state.staging =
-        mask.merge(state.staging, state.cursor, e.offsetX, e.offsetY);
+        mask.merge(state.staging, state.cursor, e.offsetX - , e.offsetY);
     state.diff = state.staging;
   }
 };
@@ -96,6 +99,33 @@ SquarePaint.draw_ = function(state) {
     }
   }
   context.putImageData(imageData, boundingBox.minX, boundingBox.minY);
+  if (!state.mask) {
+    return;
+  }
+  {
+    var context = state.canvasDbg.getContext('2d');
+    var boundingBox = state.staging.boundingBox;
+    var w = boundingBox.maxX - boundingBox.minX + 1;
+    var imageData = context.createImageData(
+        w, boundingBox.maxY - boundingBox.minY + 1);
+    var alternations = state.staging.alternations; 
+    for (var y in alternations) {
+      yN = Number(y) - boundingBox.minY;
+      for (var i = 0; i < alternations[y].length; i += 2) {
+        for (var x = alternations[y][i] - boundingBox.minX; 
+            x < alternations[y][i + 1] - boundingBox.minX; ++x) {
+          imageData.data[(w * yN + x) * 4 + 0] = 255;
+          imageData.data[(w * yN + x) * 4 + 1] = 0;
+          imageData.data[(w * yN + x) * 4 + 2] = 0;
+          imageData.data[(w * yN + x) * 4 + 3] = 255;
+        }
+      }
+    }
+    context.fillRect(0, 0, 600, 600)
+    context.putImageData(imageData, 0, 0);
+  }
+
+
 };
 
 SquarePaint.initCursor_ = function(r) {
@@ -109,6 +139,6 @@ SquarePaint.initCursor_ = function(r) {
   return mask.create(alternations);
 };
 
-SquarePaint.state_;
+goog.exportSymbol('jspaint.SquarePaint', SquarePaint);
 
 });

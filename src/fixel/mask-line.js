@@ -1,5 +1,5 @@
-goog.provide('mask.MaskLine');
-goog.provide('mask.MaskLine.Alternations');
+goog.provide('fixel.mask.MaskLine');
+goog.provide('fixel.mask.Alternations');
 
 goog.require('goog.array');
 
@@ -11,8 +11,8 @@ goog.scope(function() {
  * Assumed to be sorted.
  * @typedef {!Array<number>}
  */
-mask.MaskLine.Alternations;
-var Alternations = mask.MaskLine.Alternations;
+fixel.mask.Alternations;
+var Alternations = fixel.mask.Alternations;
 
 /**
  * Merges the mask with another mask
@@ -20,7 +20,7 @@ var Alternations = mask.MaskLine.Alternations;
  * @param {Alternations} maskB
  * @return {Alternations}
  */
-mask.MaskLine.merge = function(maskA, maskB, offset) {
+fixel.mask.mergeMaskLine = function(maskA, maskB, offset) {
   offset = offset || 0;
   if (!goog.isDefAndNotNull(maskA) && !goog.isDefAndNotNull(maskB)) {
     return null;
