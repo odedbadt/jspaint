@@ -1,7 +1,7 @@
-goog.require('jspaint.SquarePaint');
-goog.require('mask.MaskLineTest');
-goog.require('mask.MaskTest');
+goog.require('fixel.jspaint.SquarePaint');
+goog.require('fixel.mask.MaskLineTest');
+goog.require('fixel.mask.MaskTest');
 
-goog.exportProperty['mask.MaskLineTest.testMerge', mask.MaskLineTest.testMerge);
-goog.exportProperty('mask.MaskTest.testMerge', mask.MaskLineTest.testMerge);
-goog.exportSymbol('jspaint.SquarePaint', jspaint.SquarePaint);
+goog.exportProperty['fixel.mask.MaskLineTest.testMerge', fixel.mask.MaskLineTest.testMerge);
+goog.exportProperty('fixel.mask.MaskTest.testMerge', fixel.mask.MaskLineTest.testMerge);
+goog.exportSymbol('fixel.jspaint.SquarePaint', fixel.jspaint.SquarePaint);

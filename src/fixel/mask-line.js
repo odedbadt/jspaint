@@ -14,6 +14,7 @@ goog.scope(function() {
 fixel.mask.Alternations;
 var Alternations = fixel.mask.Alternations;
 
+
 /**
  * Merges the mask with another mask
  * @param {Alternations} maskA
@@ -35,6 +36,7 @@ fixel.mask.mergeMaskLine = function(maskA, maskB, offset) {
   var iB = 0;
   var lit = 0;
   var output = [];
+  var isEmpty = true;
   while (true) {
     if (iA < maskA.length && (iB >= maskB.length ||
         iB < maskB.length && maskA[iA] < maskB[iB] + offset)) {
@@ -42,12 +44,14 @@ fixel.mask.mergeMaskLine = function(maskA, maskB, offset) {
       if (iA % 2 == 0) {
         if (lit == 0) {
           output.push(maskA[iA]);
+          isEmpty = false;
         }
         lit++;
       } else {
         lit--;
         if (lit == 0) {
           output.push(maskA[iA]);
+          isEmpty = false;
         }
       }
       iA++;
@@ -56,12 +60,14 @@ fixel.mask.mergeMaskLine = function(maskA, maskB, offset) {
       if (iB % 2 == 0) {
         if (lit == 0) {
           output.push(maskB[iB] + offset);
+          isEmpty = false;
         }
         lit++;
       } else {
         lit--;
         if (lit == 0) {
           output.push(maskB[iB] + offset);
+          isEmpty = false;
         }
       }
       iB++;
@@ -70,7 +76,47 @@ fixel.mask.mergeMaskLine = function(maskA, maskB, offset) {
       break;
     }
   }
-  return output;
+  return isEmpty ? null : output;
+};
+
+
+fixel.mask.clipMaskLine = function(alternations, fromX, toX) {
+  if (!alternations) {
+    return null;
+  }
+  var outputAlternations = [];
+  var on = false;
+  var prevInBounds = false; // x[-1] = -Inf
+  for (var i = 0; i < alternations.length; ++i) {
+    var x = alternations[i];
+    if (!prevInBounds && x >= fromX) {
+      if (on) {
+        outputAlternations.push(fromX);
+        if (x < toX) {
+          outputAlternations.push(x);
+        } else {
+          outputAlternations.push(toX);
+        }
+      } else {
+        outputAlternations.push(x);
+      }
+    }    
+    if (prevInBounds) {
+      if (x > toX) {
+        if (on) {
+          outputAlternations.push(toX);
+        }
+      } else {
+        outputAlternations.push(x);        
+      }
+    }
+    on = !on;
+    prevInBounds = x >= fromX && x < toX;
+    if (x >= toX) {
+      break;
+    }
+  }
+  return outputAlternations.length == 0 ? null : outputAlternations;
 };
 
 }); // goog.scope

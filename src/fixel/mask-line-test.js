@@ -12,6 +12,10 @@ fixel.mask.MaskLineTest.assertMaskLineEquals = function(a, b) {
     }
     throw ('Only first array is null.');
   }
+  if (!!a != !!b) {
+    console.log('Expected', a, 'Got', b);
+    throw(new Error('Arrays differ.'));
+  }
   if (a.length != b.length) {
     console.log('Expected', a, 'Got', b);
     throw(new Error('Arrays differ in size.'));
@@ -101,8 +105,53 @@ fixel.mask.MaskLineTest.testMerge = function() {
     console.log(e.stack);
   }
   try {
+  assertMaskLineEquals([10, 20], mask.mergeMaskLine([], [0, 10], 10));
+  } catch(e) {
+    console.log(e);
+    console.log(e.stack);
+  }
+  try {
+  assertMaskLineEquals([10, 20], mask.mergeMaskLine(null, [0, 10], 10));
+  } catch(e) {
+    console.log(e);
+    console.log(e.stack);
+  }
+  try {
+  assertMaskLineEquals(null, mask.mergeMaskLine(null, null, 10));
+  } catch(e) {
+    console.log(e);
+    console.log(e.stack);
+  }
+};
 
-  assertMaskLineEquals([10, 20], mask.mergeMaskLine([], [0, 10], 0, 10));
+
+fixel.mask.MaskLineTest.testClip = function() {  
+  try {
+    assertMaskLineEquals([5, 15], fixel.mask.clipMaskLine([5, 15], 5, 15));
+  } catch(e) {
+    console.log(e);
+    console.log(e.stack);
+  }
+  try {
+    assertMaskLineEquals([5, 15], fixel.mask.clipMaskLine([5, 15], 0, 20));
+  } catch(e) {
+    console.log(e);
+    console.log(e.stack);
+  }
+  try {
+    assertMaskLineEquals([5, 15], fixel.mask.clipMaskLine([0, 20], 5, 15));
+  } catch(e) {
+    console.log(e);
+    console.log(e.stack);
+  }
+  try {
+    assertMaskLineEquals([5, 15, 20, 25], fixel.mask.clipMaskLine([0, 15, 20, 30], 5, 25));
+  } catch(e) {
+    console.log(e);
+    console.log(e.stack);
+  }
+  try {
+    assertMaskLineEquals([5, 15], fixel.mask.clipMaskLine([0, 15, 20, 30], 5, 15));
   } catch(e) {
     console.log(e);
     console.log(e.stack);

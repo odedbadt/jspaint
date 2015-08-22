@@ -1,18 +1,21 @@
-goog.provide('jspaint.SquarePaint');
+goog.provide('fixel.jspaint.SquarePaint');
 
 goog.require('goog.dom');
 goog.require('goog.events.EventHandler');
 goog.require('goog.events.EventType');
-goog.require('mask');
+goog.require('fixel.mask.Mask');
 
 
 goog.scope(function() {
 
 var EventType = goog.events.EventType;
-var SquarePaint = jspaint.SquarePaint;
+var SquarePaint = fixel.jspaint.SquarePaint;
+var mask = fixel.mask;
+
+
 SquarePaint.init = function() {
   var eventHandler = new goog.events.EventHandler();
-  var cursor = SquarePaint.initCursor_(3);
+  var cursor = SquarePaint.initCursor_(30);
   var canvas = goog.dom.getElement('single-canvas');
   var canvasDbg = goog.dom.getElement('dbg-canvas');
   var state = {
@@ -51,7 +54,9 @@ window.requestAnimFrame = (function(){
 
 SquarePaint.onMouseDown_ = function(state, e) {
   state.mousedown = true;
-  state.staging = mask.merge(null, state.cursor, e.offsetX, e.offsetY);
+  var offsetX = state.staging && state.staging.boundingBox && state.staging.boundingBox.fromX || 0;
+  var offsetY = state.staging && state.staging.boundingBox && state.staging.boundingBox.fromY || 0;
+  state.staging = mask.merge(null, state.cursor, e.offsetX - offsetX, e.offsetY - offsetY);
   state.diff = state.staging;
 };
 
@@ -66,10 +71,8 @@ SquarePaint.onMouseUp_ = function(state, e) {
 
 SquarePaint.onMouseMove_ = function(state, e) {
   if (state.mousedown) {
-    var off    
-    state.staging =
-        mask.merge(state.staging, state.cursor, e.offsetX - , e.offsetY);
-    state.diff = state.staging;
+    state.staging = mask.merge(state.staging, state.cursor, e.offsetX, e.offsetY);
+    state.diff = state.staging; // TODO(oded): clone
   }
 };
 
@@ -81,16 +84,16 @@ SquarePaint.draw_ = function(state) {
   var boundingBox = state.diff.boundingBox;
   state.diff = null;
   var context = state.canvas.getContext('2d');
-  var w = boundingBox.maxX - boundingBox.minX + 1;
+  var w = boundingBox.toX - boundingBox.fromX;
   var imageData = context.createImageData(
-      w, boundingBox.maxY - boundingBox.minY + 1);
-  var maskWithStaging = mask.merge(state.mask, state.staging);
+      w, boundingBox.toY - boundingBox.fromY);
+  var maskWithStaging = mask.clip(mask.merge(state.mask, state.staging), state.staging.boundingBox);
   var alternations = maskWithStaging.alternations; 
   for (var y in alternations) {
-    yN = Number(y) - boundingBox.minY;
+    yN = Number(y) - boundingBox.fromY;
     for (var i = 0; i < alternations[y].length; i += 2) {
-      for (var x = alternations[y][i] - boundingBox.minX; 
-          x < alternations[y][i + 1] - boundingBox.minX; ++x) {
+      for (var x = alternations[y][i] - boundingBox.fromX; 
+          x < alternations[y][i + 1] - boundingBox.fromX; ++x) {
         imageData.data[(w * yN + x) * 4 + 0] = 0;
         imageData.data[(w * yN + x) * 4 + 1] = 0;
         imageData.data[(w * yN + x) * 4 + 2] = 0;
@@ -98,22 +101,23 @@ SquarePaint.draw_ = function(state) {
       }
     }
   }
-  context.putImageData(imageData, boundingBox.minX, boundingBox.minY);
+  context.putImageData(imageData, boundingBox.fromX, boundingBox.fromY);
   if (!state.mask) {
     return;
   }
+  /*
   {
     var context = state.canvasDbg.getContext('2d');
     var boundingBox = state.staging.boundingBox;
-    var w = boundingBox.maxX - boundingBox.minX + 1;
+    var w = boundingBox.toX - boundingBox.fromX;
     var imageData = context.createImageData(
-        w, boundingBox.maxY - boundingBox.minY + 1);
+        w, boundingBox.toY - boundingBox.fromY);
     var alternations = state.staging.alternations; 
     for (var y in alternations) {
-      yN = Number(y) - boundingBox.minY;
+      yN = Number(y) - boundingBox.fromY;
       for (var i = 0; i < alternations[y].length; i += 2) {
-        for (var x = alternations[y][i] - boundingBox.minX; 
-            x < alternations[y][i + 1] - boundingBox.minX; ++x) {
+        for (var x = alternations[y][i] - boundingBox.fromX; 
+            x < alternations[y][i + 1] - boundingBox.fromX; ++x) {
           imageData.data[(w * yN + x) * 4 + 0] = 255;
           imageData.data[(w * yN + x) * 4 + 1] = 0;
           imageData.data[(w * yN + x) * 4 + 2] = 0;
@@ -123,7 +127,7 @@ SquarePaint.draw_ = function(state) {
     }
     context.fillRect(0, 0, 600, 600)
     context.putImageData(imageData, 0, 0);
-  }
+  }*/
 
 
 };
@@ -136,7 +140,7 @@ SquarePaint.initCursor_ = function(r) {
       alternations[y] = [-x, x];
     }
   }
-  return mask.create(alternations);
+  return fixel.mask.create(alternations);
 };
 
 goog.exportSymbol('jspaint.SquarePaint', SquarePaint);

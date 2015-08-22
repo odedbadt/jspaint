@@ -1,4 +1,4 @@
-goog.provide('jspaint.exports');
+goog.provide('fixel.jspaint.exports');
 
-goog.require('jspaint.SquarePaint');
+goog.require('fixel.jspaint.SquarePaint');
 

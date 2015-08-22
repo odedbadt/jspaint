@@ -45,6 +45,12 @@ var assertMaskEquals = function(a, b) {
 
 fixel.mask.MaskTest.testCreate = function() {  
   try {
+    assertMaskEquals(null, mask.create(null));
+  } catch(e) {
+    console.log(e);
+    console.log(e.stack);
+  }
+  try {
     assertMaskEquals(
       {alternations: {0: [5, 10, 15, 20]},
        boundingBox: {fromX: 5, fromY: 0, toX: 20, toY: 1}},
@@ -65,7 +71,7 @@ fixel.mask.MaskTest.testMerge = function() {
     console.log(e.stack);
   }
   try {
-    assertMaskEquals(mask.create({0: [0, 15]}),
+    assertMaskEquals(mask.create({"-10": [-30, 0], 10: [0, 15]}),
     mask.merge(mask.create({"-10": [-30, 0]}), mask.create({10: [0, 15]})));
   } catch(e) {
     console.log(e);
@@ -94,7 +100,7 @@ fixel.mask.MaskTest.testMerge = function() {
 fixel.mask.MaskTest.testClip = function() {  
   try {
   assertMaskEquals(mask.create({0: [0, 15]}),
-      mask.clip(mask.create({0: [0, 20]}), fixel.createRectangle(0, 0, 0, 15)));
+      mask.clip(mask.create({0: [0, 20]}), fixel.createRectangle(0, 0, 15, 1)));
   } catch(e) {
     console.log(e);
     console.log(e.stack);
@@ -102,7 +108,7 @@ fixel.mask.MaskTest.testClip = function() {
   try {
   assertMaskEquals(mask.create({0: [0, 15]}),
       mask.clip(mask.create({0: [-10, 20]}),
-          fixel.createRectangle(0, 0, 0, 15)));
+          fixel.createRectangle(0, 0, 15, 1)));
   } catch(e) {
     console.log(e);
     console.log(e.stack);
@@ -111,7 +117,7 @@ fixel.mask.MaskTest.testClip = function() {
 
   assertMaskEquals(mask.create({1: [0, 10], 2: [5, 10], 3: [0, 10]}),
     mask.clip(mask.create({0: [-10, 50], 1: [0, 20], 2: [5, 15], 3: [-100, 10],
-        4: [0, 50]}), fixel.createRectangle(0, 1, 10, 3)));
+        4: [0, 50]}), fixel.createRectangle(0, 1, 10, 4)));
   } catch(e) {
     console.log(e);
     console.log(e.stack);
@@ -120,7 +126,7 @@ fixel.mask.MaskTest.testClip = function() {
 
   assertMaskEquals(mask.create({0: [5, 10, 15, 20]}),
       mask.clip(mask.create({0: [0, 10, 15, 30]}),
-          fixel.createRectangle(5, 0, 20, 0)));
+          fixel.createRectangle(5, 0, 20, 1)));
   } catch(e) {
     console.log(e);
     console.log(e.stack);
@@ -128,7 +134,7 @@ fixel.mask.MaskTest.testClip = function() {
   try {
   assertMaskEquals(mask.create({0: [5, 10, 15, 20]}),
       mask.clip(mask.create({0: [5, 10, 15, 20]}),
-          fixel.createRectangle(0, 0, 100, 0)));
+          fixel.createRectangle(0, 0, 100, 1)));
   } catch(e) {
     console.log(e);
     console.log(e.stack);
@@ -142,6 +148,7 @@ fixel.mask.MaskTest.testAll = function() {
     mask.MaskTest.testMerge();
     mask.MaskTest.testClip();
     mask.MaskLineTest.testMerge();
+    mask.MaskLineTest.testClip();
 };
 
 });

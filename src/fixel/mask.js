@@ -45,10 +45,12 @@ mask.mergeAlternations_ = function(alternationsA, alternationsB, offsetX, offset
         alternationsB[Number(y) - offsetY], offsetX);
   }
   for (y in alternationsB) {
-    alternations[Number(y) + offsetY] =
-        mask.mergeMaskLine(alternationsA[Number(y) + offsetY],
+    var mergedLine = mask.mergeMaskLine(alternationsA[Number(y) + offsetY],
             alternationsB[y], offsetX);
-  }
+    if (mergedLine) {
+      alternations[Number(y) + offsetY] = mergedLine;
+    }        
+  }  
   return alternations;
 };
 
@@ -56,7 +58,7 @@ mask.mergeAlternations_ = function(alternationsA, alternationsB, offsetX, offset
 mask.create = function(alternations, opt_boundingBox) {
   if (goog.object.isEmpty(alternations)) {
     return null;
-  }  
+  }
   return {
     alternations: alternations,
     boundingBox : opt_boundingBox || mask.calculateBoundingBox_(alternations)
@@ -82,7 +84,7 @@ mask.calculateBoundingBox_ = function(alternations) {
       toY = Number(y) + 1;
     }
     if (alternations[y].length == 0) {
-      return;
+      continue;
     }
     if (alternations[y][0] < fromX) {
       fromX = alternations[y][0];
@@ -99,30 +101,12 @@ mask.calculateBoundingBox_ = function(alternations) {
 mask.clip = function(mask, rectangle) {
   var alternations = {};
   for (var y in mask.alternations) {
-    var outputAlternations = [];
     if (y < rectangle.fromY || y >= rectangle.toY) {
-      continue;      
+      continue;
     }
-    var on = false;
-    var inBounds = false; // assume x[-1] = -inf
-    for (var i = 0; i < mask.alternations[y].length; ++i) {
-      var x = mask.alternations[y][i];
-      if (inBounds) {
-        if (x >= rectangle.toX) {
-          inBounds = false;
-          if (on) {
-            outputAlternations.push[x];
-          }
-        }
-      } else {
-        if (x >= rectangle.fromX) {
-          inBounds = true;
-          if (!on) {
-            outputAlternations.push[x];
-          }
-        }
-      }
-      on = !on;
+    var outputAlternations = fixel.mask.clipMaskLine(
+        mask.alternations[y], rectangle.fromX, rectangle.toX);
+    if (outputAlternations) {
       alternations[y] = outputAlternations;
     }
   }
