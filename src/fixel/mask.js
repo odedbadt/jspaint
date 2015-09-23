@@ -1,8 +1,12 @@
+goog.provide('fixel.mask');
 goog.provide('fixel.mask.Mask');
 
 goog.require('fixel.Rectangle');
 goog.require('fixel.mask.MaskLine');
 goog.require('fixel.mask.Alternations');
+goog.require('goog.object');
+goog.require('goog.array');
+goog.require('goog.asserts');
 
 goog.scope(function() {
 var Alternations = fixel.mask.Alternations;
@@ -56,6 +60,21 @@ mask.mergeAlternations_ = function(alternationsA, alternationsB, offsetX, offset
 
 
 mask.create = function(alternations, opt_boundingBox) {
+  if (goog.asserts.ENABLE_ASSERTS) {
+    goog.object.forEach(alternations, function(alternationRow, y) {
+      goog.asserts.assert(y == Math.floor(y), 'Y values must be integers.');
+      for (var i = 0; i < alternationRow.length; ++i) {
+        var x = alternationRow[i];
+        goog.asserts.assert(x == Math.floor(x), 'X values must be integers.');
+        if (i > 0) {
+          if (x == alternationRow[i - 1]) {
+            debugger;
+          }
+          goog.asserts.assert(x >  alternationRow[i - 1], 'X values must be strictly monotonely increasing %s[%s - 1, %s]: %s, %s.', y, i, i, alternationRow[i - 1], x);
+        }
+      }
+    });
+  }
   if (goog.object.isEmpty(alternations)) {
     return null;
   }
@@ -111,6 +130,109 @@ mask.clip = function(mask, rectangle) {
     }
   }
   return fixel.mask.create(alternations);
+};
+
+
+/** @return {Mask} */
+mask.convexLCursorLine = function(cursor, fromX, fromY, toX, toY) {
+  if (fromX == toX && fromY == toY) {
+    return mask.merge(null, cursor, fromX, fromY)
+  }
+  var x = fromX;
+  var y = fromY;
+  var alternations = {};
+  if (Math.abs(toX - fromX) > Math.abs(toY - fromY)) {
+    if (fromX < toX) {
+      var dx = 1;
+      var dy = (toY - fromY) / (toX - fromX);
+      while (x <= toX) {
+        result = mask.merge(result, cursor, Math.round(x), Math.round(y));
+        x += dx;
+        y += dy;
+      }
+    } else {
+      var dx = -1;
+      var dy = -(toY - fromY) / (toX - fromX);
+      while (x >= toX) {
+        result = mask.merge(result, cursor, Math.round(x), Math.round(y));
+        x += dx;
+        y += dy;
+      }    
+    }
+  } else {
+    if (fromY < toY) {
+      var dx = (toX - fromX) / (toY - fromY);    
+      var dy = 1;
+      while (y <= toY) {
+        result = mask.merge(result, cursor, Math.round(x), Math.round(y));
+        x += dx;
+        y += dy;
+      }
+    } else {
+      var dx = -(toX - fromX) / (toY - fromY);    
+      var dy = -1;
+      while (y >= toY) {
+        result = mask.merge(result, cursor, Math.round(x), Math.round(y));
+        x += dx;
+        y += dy;
+      }    
+    }    
+  }
+  return result;
+};
+
+
+/** @return {Mask} */
+mask.line = function(cursor, fromX, fromY, toX, toY) {
+  var resultAlternations = {};
+  var x = fromX;
+  var y = fromY;
+  var cursorAlternations = cursor.alternations;
+  if (fromX == toX && fromY == toY) {
+    return mask.merge(null, cursor, fromX, fromY)
+  }
+  if (Math.abs(toX - fromX) > Math.abs(toY - fromY)) {
+    if (fromX < toX) {
+      var dx = 1;
+      var dy = (toY - fromY) / (toX - fromX);
+      while (x <= toX) {
+        resultAlternations = mask.mergeAlternations_(
+            resultAlternations, cursorAlternations, Math.round(x), Math.round(y));
+        x += dx;
+        y += dy;
+      }
+    } else {
+      var dx = -1;
+      var dy = -(toY - fromY) / (toX - fromX);
+      while (x >= toX) {
+        resultAlternations = mask.mergeAlternations_(
+            resultAlternations, cursorAlternations, Math.round(x), Math.round(y));
+        x += dx;
+        y += dy;
+      }    
+    }
+  } else {
+    if (fromY < toY) {
+      var dx = (toX - fromX) / (toY - fromY);    
+      var dy = 1;
+      while (y <= toY) {
+        resultAlternations = mask.mergeAlternations_(
+            resultAlternations, cursorAlternations, Math.round(x), Math.round(y));
+        x += dx;
+        y += dy;
+      }
+    } else {
+      var dx = -(toX - fromX) / (toY - fromY);    
+      var dy = -1;
+      while (y >= toY) {
+        resultAlternations = mask.mergeAlternations_(
+            resultAlternations, cursorAlternations, Math.round(x), Math.round(y));
+        x += dx;
+        y += dy;
+      }    
+    }    
+  }
+  return mask.create(resultAlternations);
 };
 
 }); // goog.scope

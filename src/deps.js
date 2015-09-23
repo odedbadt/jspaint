@@ -2,9 +2,10 @@
 // Please do not edit.
 goog.addDependency('../../src/fixel/canvas.js', ['fixel.canvas.Canvas'], [], false);
 goog.addDependency('../../src/fixel/jspaint/exports.js', ['fixel.jspaint.exports'], ['fixel.jspaint.SquarePaint'], false);
-goog.addDependency('../../src/fixel/jspaint/square-paint.js', ['fixel.jspaint.SquarePaint'], ['fixel.mask.Mask', 'goog.dom', 'goog.events.EventHandler', 'goog.events.EventType'], false);
+goog.addDependency('../../src/fixel/jspaint/square-paint.js', ['fixel.jspaint.SquarePaint'], ['fixel.mask.Mask', 'fixel.shapes', 'goog.dom', 'goog.events.EventHandler', 'goog.events.EventType'], false);
 goog.addDependency('../../src/fixel/mask-line-test.js', ['fixel.mask.MaskLineTest'], ['fixel.mask.MaskLine'], false);
 goog.addDependency('../../src/fixel/mask-line.js', ['fixel.mask.Alternations', 'fixel.mask.MaskLine'], ['goog.array'], false);
 goog.addDependency('../../src/fixel/mask-test.js', ['fixel.mask.MaskTest'], ['fixel.Rectangle', 'fixel.mask.Mask', 'fixel.mask.MaskLineTest', 'goog.asserts', 'goog.object'], false);
-goog.addDependency('../../src/fixel/mask.js', ['fixel.mask.Mask'], ['fixel.Rectangle', 'fixel.mask.Alternations', 'fixel.mask.MaskLine'], false);
+goog.addDependency('../../src/fixel/mask.js', ['fixel.mask', 'fixel.mask.Mask'], ['fixel.Rectangle', 'fixel.mask.Alternations', 'fixel.mask.MaskLine', 'goog.array', 'goog.asserts', 'goog.object'], false);
 goog.addDependency('../../src/fixel/rectangle.js', ['fixel.Rectangle'], [], false);
+goog.addDependency('../../src/fixel/shapes.js', ['fixel.shapes'], ['fixel.mask'], false);

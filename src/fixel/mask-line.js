@@ -40,7 +40,7 @@ fixel.mask.mergeMaskLine = function(maskA, maskB, offset) {
   while (true) {
     if (iA < maskA.length && (iB >= maskB.length ||
         iB < maskB.length && maskA[iA] < maskB[iB] + offset)) {
-      // take A.
+      // A is strictly smaller or B is done, take A.
       if (iA % 2 == 0) {
         if (lit == 0) {
           output.push(maskA[iA]);
@@ -55,6 +55,16 @@ fixel.mask.mergeMaskLine = function(maskA, maskB, offset) {
         }
       }
       iA++;
+    } else if (iA < maskA.length && iB < maskB.length &&
+        maskA[iA] == (maskB[iB] + offset)) {
+        // A and B are equal, take none, skip both pointers.
+        if (iA % 2 == iB % 2) {
+          output.push(maskA[iA]);
+          isEmpty = false;          
+          lit = (iA + 1) % 2 + (iB + 1) % 2;
+        }
+        iA++;
+        iB++;
     } else if (iB < maskB.length) {
       // take B.
       if (iB % 2 == 0) {
@@ -78,7 +88,6 @@ fixel.mask.mergeMaskLine = function(maskA, maskB, offset) {
   }
   return isEmpty ? null : output;
 };
-
 
 fixel.mask.clipMaskLine = function(alternations, fromX, toX) {
   if (!alternations) {
@@ -110,11 +119,11 @@ fixel.mask.clipMaskLine = function(alternations, fromX, toX) {
         outputAlternations.push(x);        
       }
     }
-    on = !on;
     prevInBounds = x >= fromX && x < toX;
     if (x >= toX) {
       break;
     }
+    on = !on;
   }
   return outputAlternations.length == 0 ? null : outputAlternations;
 };
