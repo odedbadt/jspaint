@@ -12,106 +12,114 @@ describe("Test Create Mask", function() {
   it("A mask with no alternations should be null.", function() {
     expect(mask.create(null)).toBe(null);
   });
-  it("A mask with no alternations should be null.", function() {
-    expect(mask.create(null)).toBe(null);
-  });
   it("A single line mask should be created properly.", function() {
     expect(mask.create({0: [5, 10, 15, 20]}))
         .toEqual(
             {alternations: {0: [5, 10, 15, 20]},
-            boundingBox: {fromX: 5, fromY: 0, toX: 20, toY: 1}});
+            boundingBox: {fromX: 5, fromY: 0, toX: 20, toY: 1},
+            isSimple: false})
+  });
+  it("A mask made of couples should be simple.", function() {
+    expect(mask.create({0: [5, 10], 1: [15, 20]}).isSimple).toEqual(true);
+  });
+  it("A mask made of non couples should not be simple.", function() {
+    expect(mask.create({0: [5, 10, 15, 20], 1: [15, 20]}).isSimple)
+        .toEqual(false)
   });
 });
 
 describe("Test Merge Mask Line", function() {
   it("Merging two adjacent lines.", function() {
-    expect(mask.mergeMaskLine([10, 20], [0, 10])).toEqual([0, 20]);
+    expect(mask.mergeMaskLines([10, 20], [0, 10])).toEqual([0, 20]);
   });
   it("Merging two identical lines.", function() {
-    expect(mask.mergeMaskLine([0, 10], [0, 10])).toEqual([0, 10]);
+    expect(mask.mergeMaskLines([0, 10], [0, 10])).toEqual([0, 10]);
   });
   it("Merging two identical disjoint masks.", function() {
-    expect(mask.mergeMaskLine([0, 10, 20, 30], [0, 10, 20, 30]))
+    expect(mask.mergeMaskLines([0, 10, 20, 30], [0, 10, 20, 30]))
         .toEqual([0, 10, 20, 30]);
   });
   it("Merging two masks with an identical first range.", function() {
-    expect(mask.mergeMaskLine([0, 10, 20, 30], [0, 10, 25, 35]))
+    expect(mask.mergeMaskLines([0, 10, 20, 30], [0, 10, 25, 35]))
         .toEqual([0, 10, 20, 35]);
   });
   it("Merging two identical tiny lines.", function() {
-    expect(mask.mergeMaskLine([1, 2], [1, 2])).toEqual([1, 2]);
+    expect(mask.mergeMaskLines([1, 2], [1, 2])).toEqual([1, 2]);
   });
   it("Merging one line containing the other, sharing right boundary.",
       function() {
-        expect(mask.mergeMaskLine([0, 20], [5, 15])).toEqual([0, 20]);
+        expect(mask.mergeMaskLines([0, 20], [5, 15])).toEqual([0, 20]);
       });
   it("Merging one line containing the other, sharing right boundary.",
       function() {
-        expect(mask.mergeMaskLine([0, 20], [5, 20])).toEqual([0, 20]);
+        expect(mask.mergeMaskLines([0, 20], [5, 20])).toEqual([0, 20]);
       });
   it("Merging one line containing the other, sharing left boundary.",
       function() {
-        expect(mask.mergeMaskLine([0, 15], [0, 20])).toEqual([0, 20]);
+        expect(mask.mergeMaskLines([0, 15], [0, 20])).toEqual([0, 20]);
       });
   it("Merging two non intersecting ranges.",
       function() {
-        expect(mask.mergeMaskLine([0, 10], [15, 25])).toEqual([0, 10, 15, 25]);
+        expect(mask.mergeMaskLines([0, 10], [15, 25])).toEqual([0, 10, 15, 25]);
       });
   it("Merging two adject ranges, the second to the left of the first.",
       function() {
-        expect(mask.mergeMaskLine([-5, 0], [0, 5])).toEqual([-5, 5]);
+        expect(mask.mergeMaskLines([-5, 0], [0, 5])).toEqual([-5, 5]);
       });
   it("The first line is null.",
       function() {
-        expect(mask.mergeMaskLine(null, [0, 10])).toEqual([0, 10]);
+        expect(mask.mergeMaskLines(null, [0, 10])).toEqual([0, 10]);
       });
   it("The second line is null.",
       function() {
-        expect(mask.mergeMaskLine([0, 10], null)).toEqual([0, 10]);
+        expect(mask.mergeMaskLines([0, 10], null)).toEqual([0, 10]);
       });
   it("The first line is empty, not null.",
       function() {
-        expect(mask.mergeMaskLine([], [0, 10])).toEqual([0, 10]);
+        expect(mask.mergeMaskLines([], [0, 10])).toEqual([0, 10]);
       });
   it("The first line is empty, with offset.",
       function() {
-        expect(mask.mergeMaskLine([], [0, 10], 10)).toEqual([10, 20]);
+        expect(mask.mergeMaskLines([], [0, 10], 10)).toEqual([10, 20]);
       });
   it("The second line is empty.",
       function() {
-        expect(mask.mergeMaskLine([0, 10], null)).toEqual([0, 10]);
+        expect(mask.mergeMaskLines([0, 10], null)).toEqual([0, 10]);
       });
   it("The second line is empty, not null.",
       function() {
-        expect(mask.mergeMaskLine([0, 10], [])).toEqual([0, 10]);
+        expect(mask.mergeMaskLines([0, 10], [])).toEqual([0, 10]);
       });
   it("Two nulls, with offset.",
       function() {
-        expect(mask.mergeMaskLine(null, null, 10)).toEqual(null);
+        expect(mask.mergeMaskLines(null, null, 10)).toEqual(null);
       });
   it("The first line is undefined.",
       function() {
-        expect(mask.mergeMaskLine(undefined, [0, 10])).toEqual([0, 10]);
+        expect(mask.mergeMaskLines(undefined, [0, 10])).toEqual([0, 10]);
       });
   it("The second line is undefined.",
       function() {
-        expect(mask.mergeMaskLine([0, 10], undefined)).toEqual([0, 10]);
+        expect(mask.mergeMaskLines([0, 10], undefined)).toEqual([0, 10]);
       });
   it("Merging two intersecting ranges, with explicit zero offset.",
       function() {
-        expect(mask.mergeMaskLine([0, 10], [5, 15], 0)).toEqual([0, 15]);
+        expect(mask.mergeMaskLines([0, 10], [5, 15], 0)).toEqual([0, 15]);
       });
   it("Merging with offset.",
       function() {
-        expect(mask.mergeMaskLine([0, 10], [0, 10], 5)).toEqual([0, 15]);
+        expect(mask.mergeMaskLines([0, 10], [0, 10], 5)).toEqual([0, 15]);
       });
   it("Merging with offset, no intersection.",
       function() {
-        expect(mask.mergeMaskLine([0, 10], [0, 10], 15))
+        expect(mask.mergeMaskLines([0, 10], [0, 10], 15))
             .toEqual([0, 10, 15, 25]);
       });
   it("Encountered bug #1.", function() {
-    expect(mask.mergeMaskLine([1, 2], [0, 1], 1)).toEqual([1, 2])
+    expect(mask.mergeMaskLines([1, 2], [0, 1], 1)).toEqual([1, 2])
+  });
+  it("Encountered bug #2.", function() {
+    expect(mask.mergeMaskLines([-99,99], [-100,100], 1)).toEqual([-99, 101])
   });
 });
 
@@ -128,10 +136,25 @@ describe("Test Merge Mask Line", function() {
       .toEqual([498, 530]);
   });
 
-  it("Encountered bug #1.", function() {
-    expect(mask.clipMaskLine(
-        [252, 277, 327, 410, 450, 478, 514, 560, 610, 632], 277, 745))
-        .toEqual([327, 410, 450, 478, 514, 560, 610, 632])
+  it("Clip multi section line with range starting on range end.", function() {
+    expect(fixel.mask.clipMaskLine([10, 20, 30, 40], 20, 45))
+      .toEqual([30, 40]);
+  });
+  it("Clip multi section line with range whose starting point is identical to that of a range in the mask.", function() {
+    expect(fixel.mask.clipMaskLine([10, 20, 30, 40], 10, 25))
+      .toEqual([10, 20]);
+  });
+  it("Clip multi section line with range whose starting point is identical to that of a range in the mask and end point within the next range.", function() {
+    expect(fixel.mask.clipMaskLine([10, 20, 30, 40], 10, 35))
+      .toEqual([10, 20, 30, 35]);
+  });
+  it("Clip multi section line with range whose starting point is identical to that of a range in the mask and end point after the next range.", function() {
+    expect(fixel.mask.clipMaskLine([10, 20, 30, 40, 50, 60], 10, 55))
+      .toEqual([10, 20, 30, 40, 50, 55]);
+  });
+  it("Clip multi section line with range identical to a range in the mask.", function() {
+    expect(fixel.mask.clipMaskLine([10, 20, 30, 40], 10, 20))
+      .toEqual([10, 20]);
   });
 });
 // 

@@ -21,7 +21,7 @@ var Alternations = fixel.mask.Alternations;
  * @param {Alternations} maskB
  * @return {Alternations}
  */
-fixel.mask.mergeMaskLine = function(maskA, maskB, offset) {
+fixel.mask.mergeMaskLines = function(maskA, maskB, offset) {
   offset = offset || 0;
   if (!goog.isDefAndNotNull(maskA) && !goog.isDefAndNotNull(maskB)) {
     return null;
@@ -31,6 +31,9 @@ fixel.mask.mergeMaskLine = function(maskA, maskB, offset) {
   }
   if (!goog.isDefAndNotNull(maskB)) {
     return maskA;
+  }
+  if (maskA.length == 2 && maskB.length == 2) {
+    return fixel.mask.mergeSimpleMaskLines(maskA, maskB, offset);
   }
   var iA = 0;
   var iB = 0;
@@ -89,6 +92,28 @@ fixel.mask.mergeMaskLine = function(maskA, maskB, offset) {
   return isEmpty ? null : output;
 };
 
+fixel.mask.mergeSimpleMaskLines = function(maskA, maskB, offset) {
+  if (!maskA && !maskB) {
+    return null;
+  }
+  if (!maskB) {
+    return maskA;
+  }
+  if (!maskA) {
+    return [maskB[0] + offset, maskB[1] + offset];
+  }
+  /*goog.asserts.assert(maskA.length == 2, 'Mask A is not simple.');
+  goog.asserts.assert(maskB.length == 2, 'Mask B is not simple.');*/
+  if (maskA[1] < maskB[0] + offset) {
+    return [maskA[0], maskA[1], maskB[0] + offset, maskB[1] + offset];
+  }
+  if (maskB[1] + offset < maskA[0]) {
+    return [maskB[0] + offset, maskB[1] + offset, maskA[0], maskA[1]];
+  }
+  return [Math.min(maskA[0], maskB[0] + offset),
+      Math.max(maskA[1], maskB[1] + offset)];
+};
+
 fixel.mask.clipMaskLine = function(alternations, fromX, toX) {
   if (!alternations) {
     return null;
@@ -100,10 +125,14 @@ fixel.mask.clipMaskLine = function(alternations, fromX, toX) {
     var x = alternations[i];
     if (!prevInBounds && x >= fromX) {
       if (on) {
-        outputAlternations.push(fromX);
+        
         if (x < toX) {
-          outputAlternations.push(x);
+          if (x > fromX) {
+            outputAlternations.push(fromX);
+            outputAlternations.push(x);
+          }
         } else {
+          outputAlternations.push(fromX);
           outputAlternations.push(toX);
         }
       } else {

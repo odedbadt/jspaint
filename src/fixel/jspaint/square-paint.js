@@ -115,6 +115,7 @@ SquarePaint.onMouseUp_ = function(state, e) {
   state.mousedown = false;
   state.mask = mask.merge(state.mask, state.staging);
   state.staging = null;
+  state.lastPoint = null;
   state.diff = state.staging;
 };
 
@@ -199,21 +200,27 @@ SquarePaint.draw_ = function(state) {
   if (!state.movements || state.movements.length  == 0) {
     return;    
   }
-  if (state.movements.length == 1) {
+  state.lastPoint = state.lastPoint || state.movements[0];
+  state.staging = mask.merge(state.staging, mask.line(state.cursor,
+    state.lastPoint[0][0], state.lastPoint[0][1],
+    state.movements[0][0], state.movements[0][1]));
+  if (state.movements.length  == 1) {
     state.staging = mask.merge(state.staging, state.cursor, state.movements[0][0], state.movements[0][1]);
-  }
-  for (var i = 0; i < state.movements.length - 1; ++i) {
-    state.staging = mask.merge(state.staging, mask.line(state.cursor,
-        state.movements[i][0], state.movements[i][1],
-        state.movements[i+1][0], state.movements[i+1][1]));
+    state.lastPoint = state.movements[0];
+  } else {
+    for (var i = 1; i < state.movements.length; ++i) {
+      state.staging = mask.merge(state.staging, mask.line(state.cursor,
+          state.movements[i - 1][0], state.movements[i - 1][1],
+          state.movements[i][0], state.movements[i][1]));
+      state.lastPoint = state.movements[i];
+    }
   }
   state.diff = state.staging;
-  state.movements = [state.movements[state.movements.length - 1]];
+  state.movements = [];
   if (!state.diff) {
     return;    
   }
   var boundingBox = state.diff.boundingBox;
-  state.diff = null;
   var context = state.canvas.getContext('2d');
   var w = boundingBox.toX - boundingBox.fromX;
   var imageData = context.createImageData(
@@ -233,38 +240,6 @@ SquarePaint.draw_ = function(state) {
     }
   }
   context.putImageData(imageData, boundingBox.fromX, boundingBox.fromY);
-  if (!state.mask) {
-    return;
-  }
-  /*
-  {
-    var context = state.canvasDbg.getContext('2d');
-    var boundingBox = state.staging.boundingBox;
-    var w = boundingBox.toX - boundingBox.fromX;
-    var imageData = context.createImageData(
-        w, boundingBox.toY - boundingBox.fromY);
-    var alternations = state.staging.alternations; 
-    for (var y in alternations) {
-      yN = Number(y) - boundingBox.fromY;
-      for (var i = 0; i < alternations[y].length; i += 2) {
-        for (var x = alternations[y][i] - boundingBox.fromX; 
-            x < alternations[y][i + 1] - boundingBox.fromX; ++x) {
-          imageData.data[(w * yN + x) * 4 + 0] = 255;
-          imageData.data[(w * yN + x) * 4 + 1] = 0;
-          imageData.data[(w * yN + x) * 4 + 2] = 0;
-          imageData.data[(w * yN + x) * 4 + 3] = 255;
-        }
-      }
-    }
-    context.fillRect(0, 0, 600, 600)
-    context.putImageData(imageData, 0, 0);
-  }*/
-
-
-};
-
-SquarePaint.initCursor_ = function(r) {
-
 };
 goog.exportSymbol('fixel.jspaint.SquarePaint', fixel.jspaint.SquarePaint);
 goog.exportSymbol('fixel.jspaint.SquarePaint.init', fixel.jspaint.SquarePaint.init);
