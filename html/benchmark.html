@@ -1,0 +1,22 @@
+<html>
+<head>
+  <link rel="stylesheet" type="text/css" href="../css/jspaint.css"></link>
+  <script src="../closure/goog/base.js"></script>
+  <script src="../src/deps.js"></script>
+    <script>
+      goog.require('fixel.jspaint.SquarePaint');
+    </script>
+      
+</head>
+<body>
+    <script>
+      var cursor = fixel.shapes.circle(100);
+      var t0 = (new Date()).getTime();
+      for (var i = 0; i < 100; ++i) {
+        fixel.mask.line(cursor, 0, 0, 50, 50)
+      }
+      var t1 = (new Date()).getTime();
+      console.log(t1 - t0)
+    </script>
+</body>
+</html>
