@@ -1,9 +1,5 @@
 goog.provide('fixel.mask.MaskTest')
-goog.require('goog.asserts');
-goog.require('goog.object');
-goog.require('fixel.Rectangle');
-goog.require('fixel.mask.Mask');
-goog.require('fixel.mask.MaskLineTest');
+
 goog.scope(function() {
 var mask = fixel.mask;
 var assertMaskLineEquals = fixel.mask.MaskLineTest.assertMaskLineEquals;
@@ -124,7 +120,7 @@ describe("Test Merge Mask Line", function() {
 });
 
 
-describe("Test Merge Mask Line", function() {
+describe("Test Clip Mask Line", function() {
 
   it("Clip single section line.", function() {
     expect(fixel.mask.clipMaskLine([10, 20], 5, 35))
@@ -134,6 +130,16 @@ describe("Test Merge Mask Line", function() {
   it("Clip multi section line.", function() {
     expect(fixel.mask.clipMaskLine([10, 20, 498, 530], 490, 552))
       .toEqual([498, 530]);
+  });
+
+  it("Clip multi section line in the middle of a section.", function() {
+    expect(fixel.mask.clipMaskLine([10, 20, 30, 40], 15, 35))
+      .toEqual([15, 20, 30, 35]);
+  });
+
+  it("Clip multi section line in the middle of a non section.", function() {
+    expect(fixel.mask.clipMaskLine([10, 20, 30, 40, 50, 60], 25, 45))
+      .toEqual([30, 40]);
   });
 
   it("Clip multi section line with range starting on range end.", function() {
@@ -156,6 +162,16 @@ describe("Test Merge Mask Line", function() {
     expect(fixel.mask.clipMaskLine([10, 20, 30, 40], 10, 20))
       .toEqual([10, 20]);
   });
+  it("Clip multi range line with clip range ending at range start.", function() {
+    expect(fixel.mask.clipMaskLine([10, 20, 30, 40, 50, 60], 25, 50))
+        .toEqual([30, 40]);
+  });
+  it("Bug #1.", function() {
+    expect(fixel.mask.clipMaskLine(
+        [59, 94, 169, 211, 226, 239, 488, 541, 543, 559, 645, 702, 950, 971],
+        466, 543)).toEqual([488, 541]);
+  });
+
 });
 // 
 
@@ -193,7 +209,7 @@ describe("Test Merge Mask", function() {
       0: [0, 1],
       1: [0, 1],
       2: [0, 2],
-      3: [1, 2],
+      3: [1, 2]
     }), mask.create({0: [0, 1], 1: [0, 1]}), 1, 3))
         .toEqual(mask.create({
       0: [0, 1],
@@ -257,7 +273,7 @@ describe("Test Mask Line", function() {
            1: [0, 1],
            2: [0, 2],
            3: [1, 2],
-           4: [1, 2],
+           4: [1, 2]
          }));
   });
   it("A 2 pixel non trivial line, left to right.", function() {

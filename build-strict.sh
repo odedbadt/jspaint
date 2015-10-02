@@ -1,6 +1,5 @@
 
-
-java -jar ~/bin/compiler.jar --js src --compilation_level ADVANCED_OPTIMIZATIONS --warning_level=VERBOSE \
+java -jar ~/bin/compiler.jar --js src/fixel closure/goog/ third_party_closure/goog/ --only_closure_dependencies --closure_entry_point=fixel.jspaint.SquarePaint --compilation_level ADVANCED_OPTIMIZATIONS --js_output_file ./bin/all.js  --warning_level=VERBOSE \
   --jscomp_error=accessControls \
   --jscomp_error=checkDebuggerStatement \
   --jscomp_error=checkEventfulObjectDisposal \
@@ -26,7 +25,6 @@ java -jar ~/bin/compiler.jar --js src --compilation_level ADVANCED_OPTIMIZATIONS
   --jscomp_error=missingReturn \
   --jscomp_error=newCheckTypes \
   --jscomp_error=nonStandardJsDocs \
-  --jscomp_error=reportUnknownTypes \
   --jscomp_error=strictModuleDepCheck \
   --jscomp_error=suspiciousCode \
   --jscomp_error=tweakValidation \
