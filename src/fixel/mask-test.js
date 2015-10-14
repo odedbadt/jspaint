@@ -2,8 +2,8 @@ goog.provide('fixel.mask.MaskTest')
 
 goog.scope(function() {
 var mask = fixel.mask;
-var assertMaskLineEquals = fixel.mask.MaskLineTest.assertMaskLineEquals;
 var Mask = fixel.mask.Mask;
+
 describe("Test Create Mask", function() {
   it("A mask with no alternations should be null.", function() {
     expect(mask.create(null)).toBe(null);
@@ -171,6 +171,10 @@ describe("Test Clip Mask Line", function() {
         [59, 94, 169, 211, 226, 239, 488, 541, 543, 559, 645, 702, 950, 971],
         466, 543)).toEqual([488, 541]);
   });
+  it("Bug #2.", function() {
+    expect(fixel.mask.clipMaskLine([670,680], 216, 420)).toBeNull();
+  });
+  
 
 });
 // 

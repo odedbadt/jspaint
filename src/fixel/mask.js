@@ -2,13 +2,15 @@ goog.provide('fixel.mask');
 goog.provide('fixel.mask.Alternations');
 goog.provide('fixel.mask.Mask');
 
-goog.require('fixel.Rectangle');
+goog.require('fixel.rectangle');
+goog.require('fixel.rectangle.Rectangle');
+goog.require('goog.array');
 goog.require('goog.object');
 goog.require('goog.asserts');
 
 goog.scope(function() {
 var MaskLine = fixel.mask.MaskLine;
-var Rectangle = fixel.Rectangle;
+var Rectangle = fixel.rectangle.Rectangle;
 
 /**
  * Assumed to be sorted.
@@ -144,7 +146,7 @@ mask.calculateBoundingBox_ = function(alternations) {
       toX = alternations[y][alternations[y].length - 1];
     }
   }
-  return fixel.createRectangle(fromX, fromY, toX, toY);
+  return fixel.rectangle.create(fromX, fromY, toX, toY);
 };
 
 /** @return {boolean} */
@@ -424,7 +426,7 @@ fixel.mask.clipMaskLine = function(alternations, fromX, toX) {
           outputAlternations.push(fromX);
           outputAlternations.push(toX);
         }
-      } else {
+      } else if (x < toX  || (x <= toX && on)) {
         outputAlternations.push(x);
       }
     }    
