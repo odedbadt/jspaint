@@ -1,6 +1,9 @@
 goog.provide('fixel.Point');
 
 
+goog.scope(function() {
+
+
 
 /**
  * @typedef {{x: number, y: number}}
@@ -17,3 +20,5 @@ var Point = fixel.Point;
 fixel.createRectangle = function(x, y) {
   return {x: x, y: y}
 }
+
+});  // goog.scope

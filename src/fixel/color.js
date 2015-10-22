@@ -7,7 +7,7 @@ goog.scope(function(){
 
 
 /**
- * @typedef {{r: Number, g: Number, b: Number}}
+ * @typedef {{r: number, g: number, b: number}}
  */
 fixel.Color;
 var Color = fixel.Color;

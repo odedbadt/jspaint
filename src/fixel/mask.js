@@ -134,7 +134,7 @@ mask.calculateBoundingBox_ = function(alternations) {
       fromY = Number(y);
     }
     if (Number(y) + 1 > toY) {
-      toY = Number(y) + 1;
+      toY = Number(y) + 1; 
     }
     if (alternations[y].length == 0) {
       continue;
@@ -162,6 +162,9 @@ mask.calculateIsSimple_ = function(alternations) {
 
 /** @return {Mask} */
 mask.clip = function(mask, rectangle) {
+  if (!rectangle) {
+    return null;    
+  }
   var alternations = {};
   for (var y in mask.alternations) {
     if (y < rectangle.fromY || y >= rectangle.toY) {
@@ -446,6 +449,24 @@ fixel.mask.clipMaskLine = function(alternations, fromX, toX) {
     on = !on;
   }
   return outputAlternations.length == 0 ? null : outputAlternations;
+};
+
+
+fixel.mask.lineContains = function(line, x) {
+  for (var i = 0; i < line.length; ++i) {
+    if (line[i] > x) {
+      return (i % 2) == 1;
+    }
+  }
+};
+
+
+fixel.mask.contains = function(mask, location) {
+  var row = mask.alternations[location[1]];
+  if (!row) {
+    return false;    
+  }
+  return fixel.mask.lineContains(row, location[0]);
 };
 
 });  // goog.scope

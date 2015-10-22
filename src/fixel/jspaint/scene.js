@@ -18,6 +18,7 @@ var Color = fixel.Color;
  * }}
  */
 fixel.jspaint.Layer;
+var Layer = fixel.jspaint.Layer;
 
 
 

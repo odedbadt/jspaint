@@ -119,7 +119,11 @@ describe("Test Merge Mask Line", function() {
   });
 });
 
-
+describe("Test Clip", function() {
+  it("Clip a mask with anull rectangle.", function() {
+    expect(fixel.mask.clip(mask.create({0: [10, 20]}), null).toBeNull();
+  });
+});
 describe("Test Clip Mask Line", function() {
 
   it("Clip single section line.", function() {

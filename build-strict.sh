@@ -1,5 +1,5 @@
 
-java -jar ~/bin/compiler.jar --js src/fixel closure/goog/ third_party_closure/goog/ --only_closure_dependencies --closure_entry_point=fixel.jspaint.SquarePaint --compilation_level ADVANCED_OPTIMIZATIONS --js_output_file ./bin/all.js  --warning_level=VERBOSE \
+java -jar ~/bin/compiler.jar --js src/fixel closure/goog/ third_party_closure/goog/  --generate_exports --only_closure_dependencies --closure_entry_point=fixel.jspaint.SquarePaint --compilation_level ADVANCED_OPTIMIZATIONS --js_output_file ./bin/all.js  --warning_level=VERBOSE \
   --jscomp_error=accessControls \
   --jscomp_error=checkDebuggerStatement \
   --jscomp_error=checkEventfulObjectDisposal \
@@ -34,4 +34,4 @@ java -jar ~/bin/compiler.jar --js src/fixel closure/goog/ third_party_closure/go
   --jscomp_error=useOfGoogBase \
   --jscomp_error=uselessCode \
   --jscomp_error=visibility \
-  --js_output_file out.js
+  --js_output_file bin/all.js
