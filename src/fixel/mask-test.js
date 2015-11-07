@@ -1,8 +1,10 @@
-goog.provide('fixel.mask.MaskTest')
+
 
 goog.scope(function() {
-var mask = fixel.mask;
 var Mask = fixel.mask.Mask;
+var mask = fixel.mask;
+var point = fixel.point;
+var rectangle = fixel.rectangle;
 
 describe("Test Create Mask", function() {
   it("A mask with no alternations should be null.", function() {
@@ -121,7 +123,7 @@ describe("Test Merge Mask Line", function() {
 
 describe("Test Clip", function() {
   it("Clip a mask with anull rectangle.", function() {
-    expect(fixel.mask.clip(mask.create({0: [10, 20]}), null).toBeNull();
+    expect(fixel.mask.clip(mask.create({0: [10, 20]}), null)).toBeNull();
   });
 });
 describe("Test Clip Mask Line", function() {
@@ -205,7 +207,7 @@ describe("Test Merge Mask", function() {
         .toEqual(mask.create({0: [0, 5], 1: [10, 20]}));
   });
   it("Merging a null mask with a non null mask with offset.", function() {
-    expect(mask.merge(null, mask.create({0: [0, 10]}), 10, 10))
+    expect(mask.merge(null, mask.create({0: [0, 10]}), point.create(10, 10) ))
         .toEqual(mask.create({10: [10, 20]}));
   });
   it("Merging two empty masks.", function() {
@@ -228,6 +230,8 @@ describe("Test Merge Mask", function() {
     }));
   });
 });
+
+
 describe("Test Mask Line", function() {
   var pixelCursor = mask.create({0: [0, 1]});
   it("A 1 pixel line.", function() {
@@ -304,7 +308,49 @@ describe("Test Mask Line", function() {
            5: [1, 3],
            6: [1, 3],
            7: [1, 3]
-         }));
+    }));
   });
 });
+
+
+describe("Test Create From Boolean", function() {
+  it("A dot.", function() {
+    expect(mask.fromBoolean(rectangle.create(0, 0, 4, 4), function(x, y) { return x == 1 && y == 1;}))
+        .toEqual(mask.create({
+          1 : [1, 2]
+        }));
+  });
+  it("A square.", function() {
+    expect(mask.fromBoolean(rectangle.create(0, 0, 4, 4), function(x, y) { return x == 1;}))
+        .toEqual(mask.create({
+          0 : [1, 2],
+          1 : [1, 2],
+          2 : [1, 2],
+          3 : [1, 2]
+        }));
+  });
+  it("A narrow bounding box.", function() {
+    expect(mask.fromBoolean(rectangle.create(0, 0, 2, 4), function(x, y) { return x == 1;}))
+        .toEqual(mask.create({
+          0 : [1, 2],
+          1 : [1, 2],
+          2 : [1, 2],
+          3 : [1, 2]
+        }));
+  });
+  it("A non simple mask.", function() {
+    expect(mask.fromBoolean(rectangle.create(0, 0, 4, 1), function(x, y) { return x == 1 || x == 3;}))
+        .toEqual(mask.create({
+          0 : [1, 2, 3, 4]
+        }));
+  });
+  it("A rectangle.", function() {
+    expect(mask.fromBoolean(rectangle.create(0, 0, 3, 3), function(x, y) { return true;}))
+        .toEqual(mask.create({
+          0: [0, 3],
+          1: [0, 3],
+          2: [0, 3]
+        }));
+  });
 });
+}, 10);

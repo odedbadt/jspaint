@@ -1,6 +1,7 @@
 goog.provide('fixel.jspaint.renderer');
 goog.provide('fixel.jspaint.Context2dLike');
 
+goog.require('fixel.mask.Mask');
 goog.require('fixel.jspaint.Scene');
 goog.require('fixel.rectangle.Rectangle');
 
@@ -19,28 +20,21 @@ var Context2dLike = fixel.jspaint.Context2dLike;
 
 /**
  * @param {!Scene} scene
- * @param {Rectangle} diffBoundingBox
- * @param {Rectangle} boundingBox
- * @param {{createImageData:function(number, number): Context2dLike,
+ * @param {Mask} diff
+ * @param {{getImageData:function(number, number, number, number): Context2dLike,
  *          putImageData:function(Context2dLike, number, number)}} writableContext
  */
-fixel.jspaint.renderer.renderScene = function(scene, diffBoundingBox, boundingBox, writableContext) {
-  if (!diffBoundingBox || ! boundingBox) {
+fixel.jspaint.renderer.renderScene = function(scene, diff, writableContext) {
+  if (!diff || ! scene.boundingBox) {
     return;
   }
-  /*var sceneBoundingBox = null;
-  goog.array.forEach(scene.layers, function(layer) {
-    sceneBoundingBox = fixel.rectangle.boundingRect(sceneBoundingBox, layer.mask && layer.mask.boundingBox);
-  });
-  if (!sceneBoundingBox) {
-    return;
-  }*/
+  diffBoundingBox = diff.boundingBox;
   var width = fixel.rectangle.width(diffBoundingBox);
   var height = fixel.rectangle.height(diffBoundingBox);
-  var imageData = writableContext.createImageData(width, height);
+  var imageData = writableContext.getImageData(diffBoundingBox.fromX, diffBoundingBox.fromY, width, height);
 
-  var offsetX = diffBoundingBox.fromX - boundingBox.fromX;
-  var offsetY = diffBoundingBox.fromY - boundingBox.fromY;
+  var offsetX = diffBoundingBox.fromX - scene.boundingBox.fromX;
+  var offsetY = diffBoundingBox.fromY - scene.boundingBox.fromY;
   goog.array.forEach(scene.layers, function(layer, layerIndex) {
     if (!layer || !layer.mask) {
       return;
@@ -57,7 +51,11 @@ fixel.jspaint.renderer.renderScene = function(scene, diffBoundingBox, boundingBo
         for (var x = alternationsRow[i]; x < alternationsRow[i + 1]; ++x) {
           var xN = x - offsetX;
           var n = (width * yN + xN) * 4;
-          var color = layer.color;
+          var texture = layer.texture;
+          if (!texture) {
+            return;
+          }
+          var color = texture(x, Number(y));
           imageData.data[n] = color.r;
           imageData.data[n + 1] = color.g;
           imageData.data[n + 2] = color.b;

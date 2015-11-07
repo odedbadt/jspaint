@@ -1,11 +1,11 @@
 goog.provide('fixel.jspaint.Tool');
 
 goog.require('fixel.jspaint.Scene');
-goog.require('fixel.Point');
+goog.require('fixel.point.Point');
 goog.require('fixel.mask.Mask');
 
 goog.scope(function(){
-var Point = fixel.Point;
+var Point = fixel.point.Point;
 var Mask = fixel.mask.Mask;
 var Scene = fixel.jspaint.Scene;
 

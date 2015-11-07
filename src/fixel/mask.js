@@ -2,6 +2,7 @@ goog.provide('fixel.mask');
 goog.provide('fixel.mask.Alternations');
 goog.provide('fixel.mask.Mask');
 
+goog.require('fixel.point');
 goog.require('fixel.rectangle');
 goog.require('fixel.rectangle.Rectangle');
 goog.require('goog.array');
@@ -11,6 +12,10 @@ goog.require('goog.asserts');
 goog.scope(function() {
 var MaskLine = fixel.mask.MaskLine;
 var Rectangle = fixel.rectangle.Rectangle;
+var point = fixel.point;
+var rectangle = fixel.rectangle;
+
+
 
 /**
  * Assumed to be sorted.
@@ -35,20 +40,19 @@ var Mask = fixel.mask.Mask;
 /**
  * @param {Mask} maskA
  * @param {Mask} maskB
- * @param {number=} opt_offsetX
- * @param {number=} opt_offsetY
+ * @param {Point=} opt_offset
  */
-mask.merge = function(maskA, maskB, opt_offsetX, opt_offsetY) {
+mask.merge = function(maskA, maskB, opt_offset) {
   if (!maskA && !maskB) {
     return null;
   }
   if (!maskA) {
-    return mask.create(mask.mergeAlternations_(fixel.mask.mergeMaskLines, {}, maskB.alternations, opt_offsetX, opt_offsetY));
+    return mask.create(mask.mergeAlternations_(fixel.mask.mergeMaskLines, {}, maskB.alternations, opt_offset && opt_offset.x, opt_offset && opt_offset.y));
   }
   if (!maskB) {
     return maskA;
   }
-  return mask.create(mask.mergeAlternations_(fixel.mask.mergeMaskLines, maskA.alternations, maskB.alternations, opt_offsetX, opt_offsetY));
+  return mask.create(mask.mergeAlternations_(fixel.mask.mergeMaskLines, maskA.alternations, maskB.alternations, opt_offset && opt_offset.x, opt_offset && opt_offset.y));
 };
 
 
@@ -180,70 +184,58 @@ mask.clip = function(mask, rectangle) {
 };
 
 
-/**
- * @param {!Mask} cursor
- * @param {number} fromX
- * @param {number} fromY
- * @param {number} toX
- * @param {number} toY
- * @return {!Mask}
- */
-mask.convexLCursorLine = function(cursor, fromX, fromY, toX, toY) {
-  if (fromX == toX && fromY == toY) {
-    return mask.merge(null, cursor, fromX, fromY)
-  }
-  var x = fromX;
-  var y = fromY;
-  var alternations = {};
-  var result;
-  if (Math.abs(toX - fromX) > Math.abs(toY - fromY)) {
-    if (fromX < toX) {
-      var dx = 1;
-      var dy = (toY - fromY) / (toX - fromX);
-      while (x <= toX) {
-        result = mask.merge(result, cursor, Math.round(x), Math.round(y));
-        x += dx;
-        y += dy;
-      }
-    } else {
-      var dx = -1;
-      var dy = -(toY - fromY) / (toX - fromX);
-      while (x >= toX) {
-        result = mask.merge(result, cursor, Math.round(x), Math.round(y));
-        x += dx;
-        y += dy;
-      }    
-    }
-  } else {
-    if (Math.abs(toY - fromY))
-    if (fromY < toY) {
-      var dx = (toX - fromX) / (toY - fromY);    
-      var dy = 1;
-      while (y <= toY) {
-        result = mask.merge(result, cursor, Math.round(x), Math.round(y));
-        x += dx;
-        y += dy;
-      }
-    } else {
-      var dx = -(toX - fromX) / (toY - fromY);    
-      var dy = -1;
-      while (y >= toY) {
-        result = mask.merge(result, cursor, Math.round(x), Math.round(y));
-        x += dx;
-        y += dy;
-      }    
-    }    
-  }
-  return result;
+/** @return {Mask} */
+mask.line0 = function(cursor, fromX, fromY, toX, toY) {
+  return mask.lineInternal_(
+    cursor.isSimple ? fixel.mask.mergeSimpleMaskLines : fixel.mask.mergeMaskLines,
+    cursor, fromX, fromY, toX, toY);
 };
 
 
 /** @return {Mask} */
-mask.line = function(cursor, fromX, fromY, toX, toY) {
-  return mask.lineInternal_(
-    cursor.isSimple ? fixel.mask.mergeSimpleMaskLines : fixel.mask.mergeMaskLines,
-    cursor, fromX, fromY, toX, toY);
-}
+mask.line = function(cursor, fromX, fromY, toX, toY) {  
+  if (arguments.length == 3 && fromX != null && fromY != null) {
+    return mask.line(cursor, fromX.x, fromX.y, fromY.x, fromY.y)
+  }
+  //return mask.line0(cursor, fromX, fromY, toX, toY);
+  var dy = toY - fromY;
+  var h = rectangle.height(cursor.boundingBox);
+  var top = cursor.boundingBox.fromY;
+  var bottom = cursor.boundingBox.toY;
+  if (fromX > toX || dy < h) {
+    return mask.line0(cursor, fromX, fromY, toX, toY);
+  }
+  var grad = (toX - fromX) / (toY - fromY);
+  var sampler = mask.line0(cursor, 0, 0, grad * h * 2, h * 2);
+  var alternations = {};
+  var shifter = function(s) { return function(x) { return x + s;}}
+  startShifter = shifter(fromX);
+  for (var t = 0; t < h; ++t) {
+    alternations[fromY + top + t] = goog.array.map(
+      sampler.alternations[top + t], startShifter);
+  }
+  for (var t = 0; t < toY - fromY - h; ++t) {
+    alternations[fromY + top + h + t] = goog.array.map(
+      sampler.alternations[top + h], shifter(Math.floor(fromX + t * grad)));
+  }
+  var endShifter = shifter(Math.floor(toX - grad * h * 2));
+  for (var t = 0; t < h; ++t) {
+    alternations[toY + bottom - h + t] = goog.array.map(
+      sampler.alternations[bottom + h + t], endShifter);
+  }
+  /*
+  for (var t = 0; t < h; ++t) {
+    alternations[toY + bottom - h + t] = goog.array.map(
+      sampler.alternations[h + t], shifter(fromX + (toY - fromY) * grad));
+  }
+  for (var y = 0; y < toY - fromY - 2*h; ++y) {
+    alternations[y + fromY + h] = sampler.alternations[y - fromY].map(shifter(y));
+  }
+  for (var y = toY - h; y < toY; ++y) {
+    alternations[y] = sampler.alternations[y - (toY - h)].map(shifter(y));
+  }*/
+  return mask.create(alternations);
+};
 
 /**
  * @param {function(Array<number>, Array<number>, (number|undefined)): ?Array<number>} rowMergingFunction
@@ -261,7 +253,7 @@ mask.lineInternal_ = function(rowMergingFunction, cursor, fromX, fromY, toX, toY
   var y = fromY;
   var cursorAlternations = cursor.alternations;
   if (fromX == toX && fromY == toY) {
-    return mask.merge(null, cursor, fromX, fromY)
+    return mask.merge(null, cursor, point.create(fromX, fromY));
   }
   if (Math.abs(toX - fromX) > Math.abs(toY - fromY)) {
     if (fromX < toX) {
@@ -409,7 +401,7 @@ fixel.mask.mergeSimpleMaskLines = function(maskA, maskB, offset) {
       Math.max(maskA[1], maskB[1] + offset)];
 };
 
-fixel.mask.clipMaskLine = function(alternations, fromX, toX) {
+mask.clipMaskLine = function(alternations, fromX, toX) {
   if (!alternations) {
     return null;
   }
@@ -452,7 +444,8 @@ fixel.mask.clipMaskLine = function(alternations, fromX, toX) {
 };
 
 
-fixel.mask.lineContains = function(line, x) {
+mask.lineContains = function(line, x) {
+  // TODO: binary search?
   for (var i = 0; i < line.length; ++i) {
     if (line[i] > x) {
       return (i % 2) == 1;
@@ -461,12 +454,59 @@ fixel.mask.lineContains = function(line, x) {
 };
 
 
-fixel.mask.contains = function(mask, location) {
-  var row = mask.alternations[location[1]];
+/**
+ * @param {Point} location
+ * @param {Mask} mask
+ * @param {number=} opt_opffsetX
+ * @param {number=} opt_opffsetY
+ * @return {boolean}
+ */
+fixel.mask.contains = function(location, mask, opt_offset) {
+  if (!mask) {
+    return false;
+  }
+  var row = mask.alternations[location.y - (opt_offset ? opt_offset.y : 0)];
   if (!row) {
     return false;    
   }
-  return fixel.mask.lineContains(row, location[0]);
+  return fixel.mask.lineContains(row, location.x - (opt_offset ? opt_offset.x : 0));
+};
+
+
+fixel.mask.fromBoolean = function(boundingBox, f) {
+  var m = null;
+  var alternations = {};
+  for (var y = boundingBox.fromY; y < boundingBox.toY; ++y) {
+    var on = false;
+    var row = [];
+    for (var x = boundingBox.fromX; x < boundingBox.toX; ++x) {
+      if (on && !f(x, y)) {
+        row.push(x);
+        on = !on;
+      }
+      if (!on && f(x, y)) {
+        row.push(x);
+        on = !on;
+      }
+    }
+    if (on) {
+      row.push(boundingBox.toX);
+    }
+    if (row.length > 0) {
+      alternations[y] = row;
+    }
+  }
+  return mask.create(alternations);
+};
+
+
+fixel.mask.fromRectangle = function(rectangle) {
+  var m = null;
+  var alternations = {};
+  for (var y = rectangle.fromY; y < rectangle.toY; ++y) {
+    alternations[y] = [rectangle.fromX, rectangle.toX];
+  }
+  return mask.create(alternations, rectangle);
 };
 
 });  // goog.scope

@@ -1,0 +1,532 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+			[
+				"re",
+				"rectangle"
+			],
+			[
+				"rende",
+				"renderer"
+			],
+			[
+				"x",
+				"opt_offsetX"
+			],
+			[
+				"cen",
+				"centerY"
+			],
+			[
+				"diff",
+				"diffBoundingBox"
+			],
+			[
+				"con",
+				"console"
+			],
+			[
+				"stroke",
+				"strokePoints"
+			],
+			[
+				"st",
+				"strokePoints"
+			],
+			[
+				"a",
+				"alternations"
+			],
+			[
+				"clip",
+				"clippedMaskWithStaging"
+			],
+			[
+				"tool",
+				"toolState"
+			],
+			[
+				"too",
+				"toolState"
+			],
+			[
+				"from",
+				"fromY"
+			],
+			[
+				"off",
+				"offsetX"
+			],
+			[
+				"sc",
+				"sceneBoundingBox"
+			],
+			[
+				"la",
+				"layers"
+			],
+			[
+				"scen",
+				"scene"
+			],
+			[
+				"bounding",
+				"boundingBox"
+			],
+			[
+				"color",
+				"colorIndex"
+			],
+			[
+				"sta",
+				"staging"
+			],
+			[
+				"fres",
+				"freshPoint"
+			],
+			[
+				"ma",
+				"maskWithFreshPoint"
+			],
+			[
+				"freshP",
+				"freshPointMask"
+			],
+			[
+				"dra",
+				"drawMovementLines_"
+			],
+			[
+				"y",
+				"offsetY"
+			],
+			[
+				"al",
+				"alternations"
+			],
+			[
+				"for",
+				"forEach"
+			],
+			[
+				"merge",
+				"mergeSimpleMaskLines"
+			],
+			[
+				"get",
+				"getBrowserEvent"
+			],
+			[
+				"boun",
+				"boundingBox"
+			],
+			[
+				"offse",
+				"offsetY"
+			],
+			[
+				"ofset",
+				"offsetX"
+			],
+			[
+				"mask",
+				"maskB"
+			],
+			[
+				"min",
+				"minX"
+			],
+			[
+				"max",
+				"maxY"
+			],
+			[
+				"Mask",
+				"MaskLine"
+			],
+			[
+				"mas",
+				"maskB"
+			]
+		]
+	},
+	"buffers":
+	[
+	],
+	"build_system": "",
+	"build_system_choices":
+	[
+	],
+	"build_varint": "",
+	"command_palette":
+	{
+		"height": 33.0,
+		"last_filter": "",
+		"selected_items":
+		[
+			[
+				"package",
+				"Package Control: Install Package"
+			]
+		],
+		"width": 575.0
+	},
+	"console":
+	{
+		"height": 139.0,
+		"history":
+		[
+			"import urllib.request,os,hashlib; h = 'eb2297e1a458f27d836c04bb0cbaf282' + 'd0e7a3098092775ccb37ca9d6b2e4b7d'; pf = 'Package Control.sublime-package'; ipp = sublime.installed_packages_path(); urllib.request.install_opener( urllib.request.build_opener( urllib.request.ProxyHandler()) ); by = urllib.request.urlopen( 'http://packagecontrol.io/' + pf.replace(' ', '%20')).read(); dh = hashlib.sha256(by).hexdigest(); print('Error validating download (got %s instead of %s), please try manual install' % (dh, h)) if dh != h else open(os.path.join( ipp, pf), 'wb' ).write(by)"
+		]
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"expanded_folders":
+	[
+		"/home/oded/work/jspaint",
+		"/home/oded/work/jspaint/src",
+		"/home/oded/work/jspaint/src/fixel",
+		"/home/oded/work/jspaint/src/fixel/jspaint"
+	],
+	"file_history":
+	[
+		"/home/oded/work/bills/pass.txt",
+		"/home/oded/work/bills/resp.html",
+		"/home/oded/work/bills/read_bills.py",
+		"/home/oded/work/jspaint/src/fixel/jspaint/square-paint.js",
+		"/home/oded/work/jspaint/html/benchmark.html",
+		"/home/oded/work/jspaint/gen-deps.sh",
+		"/home/oded/work/jspaint/html/single-canvas-dbg.html",
+		"/home/oded/work/jspaint/src/fixel/jspaint/tool.js",
+		"/home/oded/work/jspaint/src/fixel/mask.js",
+		"/home/oded/work/jspaint/src/fixel/jspaint/tools/line.js",
+		"/home/oded/work/jspaint/html/renderer-test.html",
+		"/home/oded/work/jspaint/src/fixel/jspaint/scene.js",
+		"/home/oded/work/jspaint/src/fixel/jspaint/renderer.js",
+		"/home/oded/work/jspaint/src/fixel/jspaint/renderer-test.js",
+		"/home/oded/work/jspaint/src/fixel/mask-test.js",
+		"/home/oded/work/jspaint/src/fixel/rectangle.js",
+		"/home/oded/work/jspaint/src/fixel/jspaint/tools/freeform.js",
+		"/home/oded/work/jspaint/bin/all.js",
+		"/home/oded/work/jspaint/src/fixel/shapes.js",
+		"/home/oded/work/jspaint/src/deps.js",
+		"/home/oded/work/jspaint/html/mask-test.html",
+		"/home/oded/work/jspaint/src/fixel/point.js",
+		"/home/oded/work/jspaint/build-strict.sh",
+		"/home/oded/work/jspaint/src/fixel/color.js",
+		"/home/oded/.config/sublime-text-3/Packages/User/Preferences.sublime-settings",
+		"/tmp/errs.txt",
+		"/home/oded/Downloads/The Theory of Everything (2014) [1080p]/The.Theory.of.Everything.2014.720p.BluRay.X264-AMIABLE.srt",
+		"/home/oded/Downloads/Game.of.Thrones.S03.720p.BluRay.x264.ShAaNiG/Game.of.Thrones.S03E02.720p.BluRay.450MB.ShAaNiG.com.srt",
+		"/home/oded/Downloads/thrones03/tmp/Gamo of Thrones S03E01(Xvid_v2).srt",
+		"/home/oded/work/jspaint/src/fixel/mask-line.js",
+		"/home/oded/work/jspaint/src/fixel/exports.js",
+		"/home/oded/work/jspaint/html/benchmark-opt.html",
+		"/home/oded/work/jspaint/build.sh",
+		"/home/oded/work/jspaint/src/fixel/jspaint/exports.js",
+		"/home/oded/work/jspaint/html/pointerexample.html",
+		"/home/oded/work/jspaint/src/fixel/mask-line-test.js",
+		"/home/oded/work/jspaint/html/single-canvas-opt.html",
+		"/home/oded/work/jspaint/css/jspaint.css",
+		"/home/oded/work/js-paint/src/mask/mask-line.js",
+		"/home/oded/work/js-paint/src/mask/mask-test.js",
+		"/home/oded/work/js-paint/src/mask/mask-line-test.js",
+		"/home/oded/work/js-paint/build.sh",
+		"/home/oded/work/js-paint/src/mask/mask.js",
+		"/home/oded/work/jspaint/src/fixel/canvas/canvas.js",
+		"/home/oded/work/js-paint/src/jspaint/square-paint.js",
+		"/home/oded/work/js-paint/build-strict.sh",
+		"/home/oded/work/js-paint/build-debug.sh",
+		"/home/oded/work/js-paint/src/jspaint/exports.js",
+		"/home/oded/work/js-paint/html/mask-test.html",
+		"/home/oded/work/js-paint/html/single-canvas-opt.html",
+		"/home/oded/work/js-paint/html/single-canvas-dbg.html",
+		"/home/oded/work/js-paint/deps.js",
+		"/home/oded/work/js-paint/gen-deps.sh",
+		"/home/oded/work/js-paint/css/js-paint.css",
+		"/home/oded/work/js-paint/src/js-paint/square-paint.js",
+		"/home/oded/work/learn-cljs/hello_world/out/main.js",
+		"/home/oded/work/learn-cljs/hello_world/index.html",
+		"/home/oded/work/learn-cljs/hello_world/repl.clj",
+		"/home/oded/work/learn-cljs/hello_world/release.clj",
+		"/home/oded/work/learn-cljs/hello_world/src/hello_world/core.cljs"
+	],
+	"find":
+	{
+		"height": 35.0
+	},
+	"find_in_files":
+	{
+		"height": 93.0,
+		"where_history":
+		[
+			"/home/oded/work/jspaint/closure"
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": false,
+		"find_history":
+		[
+			"goog",
+			"newNewToolStateMask",
+			"newToolStateMask",
+			"mask",
+			"Freeform",
+			"mergeSimpleMaskLines",
+			".line =",
+			"line =",
+			"\n        ",
+			"js",
+			"committed",
+			"toolState.staging",
+			"location",
+			"fixel.mask",
+			"tooltoolState",
+			"state\\.",
+			"movements",
+			"^Tool.",
+			");\n",
+			"\\[\\d+, \\d+, \\d+\\]",
+			"rectangךe",
+			"rectange",
+			"r\\d,(f|t)",
+			"state.diff",
+			")",
+			"(",
+			"mergeMaskLines",
+			"merge(",
+			"state.mask",
+			"mergeMaskLines",
+			"mergeAlternations_",
+			"calculateBoundingBox_",
+			"dump",
+			"offset",
+			"{Event} event",
+			"export",
+			"Rectangle",
+			"mousemove",
+			"lastPoint =",
+			"mask.crea",
+			"= []",
+			"state.diff = ",
+			"mergeMaskLine(",
+			"mergeAlternations_",
+			"maskB[iB]",
+			"\\s+$",
+			" +$",
+			"^  expect",
+			"expect\\(\\[(-?\\d+,)+ \\d+\\]",
+			"assertMaskLineEquals(",
+			"assertMaskLineEquals",
+			"} catch(e) {",
+			"mergeMaskLine",
+			"toString =",
+			"ontouchmove_ =",
+			"log(",
+			"log",
+			"state.movements =",
+			"addCursorMove_",
+			"requestAnimFrame",
+			"window.",
+			"touchstart",
+			"touch",
+			"pointer",
+			"initCursor_",
+			"dbg",
+			"-dbg",
+			"touch.offset",
+			"SquarePaint.log(e);",
+			"changedTouches",
+			"maxY",
+			"minY",
+			"fomX",
+			"minX",
+			"maxX",
+			"mask.",
+			"max\\w",
+			"min\\w",
+			"maxY",
+			"maxX",
+			"minY",
+			"minX",
+			"throw(",
+			"console.log(e)",
+			"mask.MaskLine.merge",
+			"var",
+			"\\{minX: \\d+, maxX: \\d+, minY: \\d+, maxY: \\d+\\}",
+			"');\n",
+			"state.mask =",
+			"']",
+			"']['",
+			"third_paryt_closure",
+			"dirty",
+			"maskA.alternations",
+			"alternations",
+			"}, mask.merge({",
+			"assertMaskEquals(",
+			"{",
+			"], mask.MaskLine.merge(",
+			"assertMaskLineEquals([",
+			"Boundaries",
+			"EventListener",
+			" +$",
+			"jspaint.SquarePaint",
+			"imgData",
+			"ctx",
+			"assertMaskEquals",
+			"assertArrayEquals",
+			"^  \\w",
+			"^",
+			"\"",
+			"');",
+			" ["
+		],
+		"highlight": true,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": true,
+		"replace_history":
+		[
+			"mouse",
+			"'"
+		],
+		"reverse": false,
+		"show_context": true,
+		"use_buffer2": true,
+		"whole_word": false,
+		"wrap": true
+	},
+	"groups":
+	[
+		{
+			"sheets":
+			[
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 25.0
+	},
+	"input":
+	{
+		"height": 33.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			]
+		],
+		"cols":
+		[
+			0.0,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			1.0
+		]
+	},
+	"menu_visible": true,
+	"output.find_results":
+	{
+		"height": 0.0
+	},
+	"pinned_build_system": "",
+	"project": "jspaint.sublime-project",
+	"replace":
+	{
+		"height": 64.0
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"last_filter": "",
+		"selected_items":
+		[
+			[
+				"mask-",
+				"src/fixel/mask-line-test.js"
+			],
+			[
+				"mask-line-",
+				"src/fixel/mask-line-test.js"
+			],
+			[
+				"mask-line-test",
+				"src/fixel/mask-line-test.js"
+			],
+			[
+				"mask-line",
+				"src/fixel/mask-line-test.js"
+			],
+			[
+				"mask",
+				"src/fixel/mask.js"
+			],
+			[
+				"rectange",
+				"src/fixel/rectangle.js"
+			],
+			[
+				"mask-test",
+				"src/fixel/mask-test.js"
+			]
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 500.0,
+		"last_filter": "",
+		"selected_items":
+		[
+			[
+				"",
+				"~/work/bills/bills.sublime-project"
+			]
+		],
+		"width": 380.0
+	},
+	"select_symbol":
+	{
+		"height": 33.0,
+		"last_filter": "",
+		"selected_items":
+		[
+		],
+		"width": 674.0
+	},
+	"selected_group": 0,
+	"settings":
+	{
+	},
+	"show_minimap": true,
+	"show_open_files": true,
+	"show_tabs": true,
+	"side_bar_visible": true,
+	"side_bar_width": 430.0,
+	"status_bar_visible": true,
+	"template_settings":
+	{
+	}
+}

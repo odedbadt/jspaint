@@ -1,15 +1,15 @@
 goog.provide('fixel.jspaint.tools.Freeform');
 
-goog.require('fixel.Color');
-goog.require('fixel.Point');
+goog.require('fixel.color.Color');
+goog.require('fixel.point.Point');
 goog.require('fixel.mask');
 goog.require('fixel.mask.Mask');
 goog.require('fixel.jspaint.Tool');
 
 goog.scope(function() {
-var Color = fixel.Color;
+var Color = fixel.color.Color;
 var Mask = fixel.mask.Mask;
-var Point = fixel.Point;
+var Point = fixel.point.Point;
 var Tool = fixel.jspaint.Tool;
 var mask = fixel.mask;
 var scene = fixel.jspaint.scene;
@@ -87,35 +87,35 @@ Freeform.prototype.exit = function(scene, toolState) {
 
 /** @override */
 Freeform.prototype.apply = function(scene, toolState) {
-  if (!toolState.dirty) {
+  if (!toolState || !toolState.dirty) {
     return null
   }
   var clippedMaskWithStaging;
   var boundingBox;
   var movementLinesMask = Freeform.drawMovementLines_(toolState.lastDrawnPoint, toolState.strokePoints, this.cursor_);
   var newBaseLayerMask = scene.layers ? 
-    fixel.mask.merge(scene.layers[0].mask, toolState.staged) : null
-  var diffBoundingBox = toolState.staged ? newBaseLayerMask.boundingBox :
-      movementLinesMask && movementLinesMask.boundingBox;
-  var newNewToolStateMask = fixel.mask.merge(toolState.mask, movementLinesMask);
+      fixel.mask.merge(scene.layers[0].mask, toolState.staged) : null
+  var diff = toolState.staged ? newBaseLayerMask : movementLinesMask;
+  var newToolStateMask = fixel.mask.merge(toolState.mask, movementLinesMask);
   return {
     scene: {
       layers:[
         {
           mask: newBaseLayerMask,
-          color: Freeform.COLORS_[0]
+          texture: function(x, y) { return Freeform.COLORS_[0];}
         },
         {
-          mask: newNewToolStateMask,
-          color: Freeform.COLORS_[1]
+          mask: newToolStateMask,
+          texture: function(x, y) { return Freeform.COLORS_[1]; }
         }
-      ]
+      ],
+      boundingBox: scene.boundingBox
     },
-    diff: diffBoundingBox,
+    diff: diff,
     toolState: {
       strokePoints: [],
       lastDrawnPoint: toolState.strokePoints[toolState.strokePoints.length - 1] || null,
-      mask: newNewToolStateMask,
+      mask: newToolStateMask,
       dirty: false
     }
   };
@@ -135,12 +135,8 @@ Freeform.drawMovementLines_ = function(lastPoint, strokePoints, cursor) {
     var result = null;
     lastPoint = lastPoint || strokePoints[0];
     for (var i = 0; i < strokePoints.length; ++i) {
-      result = mask.merge(result, mask.line(
-          cursor,
-          lastPoint[0],
-          lastPoint[1],
-          strokePoints[i][0],
-          strokePoints[i][1]));
+      result = mask.merge(result,
+          mask.line(cursor, lastPoint, strokePoints[i]));
       lastPoint = strokePoints[i];
     }
     return result;

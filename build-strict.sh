@@ -1,5 +1,5 @@
 
-java -jar ~/bin/compiler.jar --js src/fixel closure/goog/ third_party_closure/goog/  --generate_exports --only_closure_dependencies --closure_entry_point=fixel.jspaint.SquarePaint --compilation_level ADVANCED_OPTIMIZATIONS --js_output_file ./bin/all.js  --warning_level=VERBOSE \
+java -jar ~/bin/compiler.jar --js src/fixel closure/goog/ third_party_closure/goog/  --generate_exports --only_closure_dependencies --closure_entry_point=fixel.jspaint.SquarePaint --compilation_level ADVANCED_OPTIMIZATIONS --create_source_map ./source_map.map --source_map_format V3 --js_output_file ./bin/all.js  --warning_level=VERBOSE \
   --jscomp_error=accessControls \
   --jscomp_error=checkDebuggerStatement \
   --jscomp_error=checkEventfulObjectDisposal \
